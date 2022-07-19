@@ -1,4 +1,4 @@
-A Flutter plugin for showing a Cupertino-styled Hebrew date picker.
+A Flutter plugin for showing a Cupertino-styled Hebrew date picker. And returns a `DateTime` object.
 
 
 ## Features
