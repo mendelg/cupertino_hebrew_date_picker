@@ -1,4 +1,4 @@
-import 'package:cupertino_hebrew_date_picker/hebrew_date_picker.dart';
+import 'package:cupertino_hebrew_date_picker/cupertino_hebrew_date_picker.dart';
 import 'package:flutter/material.dart';
 
 void main() {
