@@ -124,7 +124,6 @@ class _CupertinoHebrewDatePickerState extends State<CupertinoHebrewDatePicker> {
     var year = selectedYearIndex == 0
         ? jewishDate.getJewishYear()
         : _years[selectedYearIndex];
-    print("year: $year, month: $month, day: $day");
 
     try {
       jewishDate = JewishDate.initDate(
