@@ -161,7 +161,6 @@ class _CupertinoHebrewDatePickerState extends State<CupertinoHebrewDatePicker> {
         itemExtent: 30,
         onSelectedItemChanged: (index) {
           setState(() {
-            print("selected day index: $index");
             selectedDayIndex = index;
             _handleOnChange();
           });
