@@ -44,11 +44,11 @@ class _CupertinoHebrewDatePickerState extends State<CupertinoHebrewDatePicker> {
   final _hebrewDateFormatter = HebrewDateFormatter();
   late var jewishDate = JewishDate.fromDateTime(widget.initialDate);
 
-  late final _dayScrollController = FixedExtentScrollController(
+  late var _dayScrollController = FixedExtentScrollController(
       initialItem: jewishDate.getJewishDayOfMonth() - 1);
-  late final _monthScrollController =
+  late var _monthScrollController =
       FixedExtentScrollController(initialItem: jewishDate.getJewishMonth() - 1);
-  late final _yearScrollController = FixedExtentScrollController(
+  late var _yearScrollController = FixedExtentScrollController(
       initialItem:
           int.parse(jewishDate.getJewishYear().toString().substring(2, 4)));
 
@@ -59,75 +59,88 @@ class _CupertinoHebrewDatePickerState extends State<CupertinoHebrewDatePicker> {
   var selectedDayIndex = 0;
   var selectedMonthIndex = 0;
   var selectedYearIndex = 0;
-  final _days = [
-    "א",
-    "ב",
-    "ג",
-    "ד",
-    "ה",
-    "ו",
-    "ז",
-    "ח",
-    "ט",
-    "י",
-    "יא",
-    "יב",
-    "יג",
-    "יד",
-    "טו",
-    "טז",
-    "יז",
-    "יח",
-    "יט",
-    "כ",
-    "כא",
-    "כב",
-    "כג",
-    "כד",
-    "כה",
-    "כו",
-    "כז",
-    "כח",
-    "כט",
-    "ל"
-  ];
-  final _months = [
-    "ניסן",
-    "אייר",
-    "סיוון",
-    "תמוז",
-    "אב",
-    "אלול",
-    "תשרי",
-    "חשוון",
-    "כסלו",
-    "טבת",
-    "שבט",
-    "אדר א",
-    "אדר ב",
-  ];
+  late List<String> _days;
+  late List<String> _months;
   final _years = [for (var i = 5700; i < 7000; i += 1) i];
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeScrollControllers();
+    _initializeDateLists();
+    _initializeSelectedIndices();
+  }
+
+  void _initializeSelectedIndices() {
+    selectedDayIndex = jewishDate.getJewishDayOfMonth() - 1;
+    selectedMonthIndex = jewishDate.getJewishMonth() - 1;
+    selectedYearIndex = _years.indexOf(jewishDate.getJewishYear());
+  }
+
+  void _initializeScrollControllers() {
+    _dayScrollController = FixedExtentScrollController(
+        initialItem: jewishDate.getJewishDayOfMonth() - 1);
+    _monthScrollController = FixedExtentScrollController(
+        initialItem: jewishDate.getJewishMonth() - 1);
+    _yearScrollController = FixedExtentScrollController(
+        initialItem: _years.indexOf(jewishDate.getJewishYear()));
+  }
+
+  void _initializeDateLists() {
+    _updateDaysList();
+    _updateMonthsList();
+  }
+
+  void _updateDaysList() {
+    int daysInMonth = jewishDate.getDaysInJewishMonth();
+    _days = List.generate(daysInMonth,
+        (index) => _hebrewDateFormatter.formatHebrewNumber(index + 1));
+  }
+
+  void _updateMonthsList() {
+    bool isLeapYear = jewishDate.isJewishLeapYear();
+    _months = [
+      "ניסן",
+      "אייר",
+      "סיון",
+      "תמוז",
+      "אב",
+      "אלול",
+      "תשרי",
+      "חשוון",
+      "כסלו",
+      "טבת",
+      "שבט",
+      isLeapYear ? "אדר א׳" : "אדר",
+    ];
+    if (isLeapYear) {
+      _months.add("אדר ב׳");
+    }
+  }
+
   _handleOnChange() {
-    var day = selectedDayIndex == 0
-        ? jewishDate.getJewishDayOfMonth()
-        : selectedDayIndex + 1;
-    var month = selectedMonthIndex == 0
-        ? jewishDate.getJewishMonth()
-        : selectedMonthIndex + 1;
+    var day = selectedDayIndex + 1;
+    var month = selectedMonthIndex + 1;
     var year = selectedYearIndex == 0
         ? jewishDate.getJewishYear()
         : _years[selectedYearIndex];
+    print("year: $year, month: $month, day: $day");
 
     try {
       jewishDate = JewishDate.initDate(
           jewishYear: year, jewishMonth: month, jewishDayOfMonth: day);
     } catch (e) {
-      // Leap year
-
+      // Handle potential exceptions such as invalid date, for example a leap year with invalid month
       jewishDate = JewishDate.initDate(
-          jewishYear: year, jewishMonth: 12, jewishDayOfMonth: day);
+          jewishYear: year,
+          jewishMonth: month == 13 ? 12 : month,
+          jewishDayOfMonth: day);
     }
+
+    setState(() {
+      _updateDaysList();
+      _updateMonthsList();
+    });
 
     widget.onDateChanged(jewishDate.getGregorianCalendar());
   }
@@ -149,6 +162,7 @@ class _CupertinoHebrewDatePickerState extends State<CupertinoHebrewDatePicker> {
         itemExtent: 30,
         onSelectedItemChanged: (index) {
           setState(() {
+            print("selected day index: $index");
             selectedDayIndex = index;
             _handleOnChange();
           });
@@ -195,8 +209,6 @@ class _CupertinoHebrewDatePickerState extends State<CupertinoHebrewDatePicker> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(_hebrewDateFormatter.formatHebrewNumber(year)),
-                const SizedBox(width: 5),
-                Text(year.toString()),
               ],
             ),
           );
