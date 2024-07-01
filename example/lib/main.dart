@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             Text(
-                'sleected ata: - ${HebrewDateFormatter().format(JewishDate.fromDateTime(selectedDate))}'),
+                'sleected date: - ${HebrewDateFormatter().format(JewishDate.fromDateTime(selectedDate))}'),
             TextButton(
               onPressed: () {
                 showHebrewCupertinoDatePicker(
