@@ -1,4 +1,7 @@
+
 A Flutter plugin for showing a Cupertino-styled Hebrew date picker. And returns a `DateTime` object.
+
+For a _Material_ Hebrew date picker See [`material_hebrew_date_picker`](https://pub.dev/packages/material_hebrew_date_picker).
 
 
 ## Features
